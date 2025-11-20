@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/* Ditt tema */
+@theme {
+  /* Bakgrunn og tekst */
+  --color-surface: #d1e7e0; /* lys bakgrunn */
+  --color-ink:     #1e1919; /* mørk tekst */
+
+  /* Brand = indigo-paletten (for knapper, linker, highlights) */
+  --color-brand-50:  var(--color-indigo-50);
+  --color-brand-100: var(--color-indigo-100);
+  --color-brand-200: var(--color-indigo-200);
+  --color-brand-300: var(--color-indigo-300);
+  --color-brand-400: var(--color-indigo-400);
+  --color-brand-500: var(--color-indigo-500);
+  --color-brand-600: var(--color-indigo-600);
+  --color-brand-700: var(--color-indigo-700);
+  --color-brand-800: var(--color-indigo-800);
+  --color-brand-900: var(--color-indigo-900); /* hovedknapp */
+}
+
+/* Enkle, gjenbrukbare knappestiler */
+.btn-primary {
+  @apply bg-brand-900 hover:bg-brand-800 text-white rounded px-4 py-2 transition-colors;
+}
+.btn-secondary {
+  @apply bg-white text-brand-900 border border-brand-200 hover:bg-brand-50 rounded px-4 py-2;
+}

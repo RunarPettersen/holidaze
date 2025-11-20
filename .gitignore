@@ -1,0 +1,53 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies & build
+node_modules
+dist
+dist-ssr
+.vite
+*.tsbuildinfo
+
+# Environment files (keep only examples)
+.env
+.env.*
+!.env.example
+
+# Tooling caches
+.eslintcache
+.parcel-cache
+.cache
+.npm
+
+# Editor folders
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Test artifacts (add if/when you use them)
+coverage
+cypress/screenshots
+cypress/videos
+playwright-report
+test-results
+
+# Hosting providers (local state)
+.netlify
+.vercel
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Misc
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
