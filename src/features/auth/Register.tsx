@@ -83,7 +83,7 @@ export default function Register() {
           placeholder="https://…"
         />
       </label>
-      <button disabled={loading} className="bg-brand rounded px-4 py-2 text-white">
+      <button disabled={loading} className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white">
         {loading ? "Registering…" : "Register"}
       </button>
     </form>

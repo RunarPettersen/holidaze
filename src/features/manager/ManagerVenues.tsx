@@ -34,7 +34,7 @@ export default function ManagerVenues() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">My venues</h1>
         <button
-          className="bg-brand rounded px-4 py-2 text-white"
+          className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white"
           onClick={() => navigate("/manager/venues/new")}
         >
           Create new venue
@@ -70,19 +70,19 @@ export default function ManagerVenues() {
                 </div>
                 <div className="mt-2 flex justify-between gap-2 text-sm">
                   <button
-                    className="rounded border px-3 py-1 hover:bg-gray-50"
+                    className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white"
                     onClick={() => navigate(`/manager/venues/${v.id}/edit`)}
                   >
                     Edit
                   </button>
                   <button
-                    className="rounded border px-3 py-1 hover:bg-gray-50"
+                    className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white"
                     onClick={() => navigate(`/manager/venues/${v.id}/bookings`)}
                   >
                     Bookings
                   </button>
                   <button
-                    className="rounded border px-3 py-1 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                    className="rounded border px-4 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
                     disabled={mutation.isPending}
                     onClick={() => {
                       const ok = window.confirm("Are you sure you want to delete this venue?");

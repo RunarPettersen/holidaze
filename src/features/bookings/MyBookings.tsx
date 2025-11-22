@@ -56,7 +56,7 @@ export default function MyBookings() {
   if (isError) {
     return (
       <div className="grid gap-3">
-        <h1 className="text-2xl font-semibold">Mine bookinger</h1>
+        <h1 className="text-2xl font-semibold">My Bookings</h1>
         <p className="text-sm text-red-600">
           Feil: {(error as Error).message}
         </p>
@@ -75,10 +75,10 @@ export default function MyBookings() {
 
   const emptyText =
     tab === "upcoming"
-      ? "Ingen kommende bookinger."
+      ? "No upcoming bookins."
       : tab === "past"
-      ? "Ingen tidligere bookinger."
-      : "Ingen bookinger enda.";
+      ? "No past bookings."
+      : "No bookings yet.";
 
   return (
     <div className="grid gap-4">
@@ -98,9 +98,9 @@ export default function MyBookings() {
           <div>
             <Link
               to="/venues"
-              className="inline-flex rounded bg-brand px-4 py-2 text-white"
+              className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white"
             >
-              Finn steder
+              Find venues
             </Link>
           </div>
         </div>

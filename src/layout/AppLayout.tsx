@@ -77,7 +77,7 @@ export default function AppLayout() {
 
                 <button
                   onClick={logout}
-                  className="rounded border px-3 py-1 hover:bg-gray-50"
+                  className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white"
                 >
                   Logout
                 </button>
@@ -88,7 +88,7 @@ export default function AppLayout() {
               <NavLink
                 to="/auth/login"
                 className={({ isActive }) =>
-                  isActive ? "text-brand-900 font-medium" : "bg-brand rounded px-3 py-1 text-white"
+                  isActive ? "bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white" : "bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white"
                 }
               >
                 Login
@@ -191,7 +191,7 @@ export default function AppLayout() {
         </div>
       </main>
 
-      <footer className="border-t">
+      <footer className="border-t bg-white">
         <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-500">
           © {new Date().getFullYear()} Holidaze
         </div>

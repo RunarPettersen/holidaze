@@ -37,7 +37,7 @@ export default function Login() {
 
   return (
     <form onSubmit={onSubmit} className="max-w-md grid gap-4">
-      <h1 className="text-2xl font-semibold">Log in</h1>
+      <h1 className="text-2xl font-semibold">Login</h1>
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <label className="grid gap-1">
@@ -64,9 +64,9 @@ export default function Login() {
 
       <button
         disabled={loading}
-        className="rounded bg-brand text-white px-4 py-2"
+        className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white"
       >
-        {loading ? "Logging in…" : "Log in"}
+        {loading ? "Logging in…" : "Login"}
       </button>
 
       <p className="text-sm text-gray-600">
