@@ -89,7 +89,7 @@ export default function ProfilePage() {
           <label className="grid gap-1">
             <span className="text-sm font-medium">Avatar URL</span>
             <input
-              className="rounded border px-3 py-2"
+              className="bg-white rounded border px-3 py-2"
               placeholder="https://…"
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
@@ -99,7 +99,7 @@ export default function ProfilePage() {
           <label className="grid gap-1">
             <span className="text-sm font-medium">Alt text (optional)</span>
             <input
-              className="rounded border px-3 py-2"
+              className="bg-white rounded border px-3 py-2"
               value={avatarAlt}
               onChange={(e) => setAvatarAlt(e.target.value)}
             />
@@ -108,7 +108,7 @@ export default function ProfilePage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="inline-flex rounded bg-brand px-4 py-2 text-white disabled:opacity-60"
+            className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white disabled:opacity-60"
           >
             {mutation.isPending ? "Saving…" : "Save avatar"}
           </button>
