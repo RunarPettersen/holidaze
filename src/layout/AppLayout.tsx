@@ -26,7 +26,7 @@ export default function AppLayout() {
   }, []);
 
   const linkClass = (isActive: boolean) =>
-    isActive ? "text-brand-900 font-medium" : "text-brand-800 hover:underline";
+    isActive ? "text-brand-900 font-medium" : "text-black hover:underline";
 
   return (
     <div className="min-h-screen bg-surface text-ink flex flex-col">
@@ -77,7 +77,7 @@ export default function AppLayout() {
 
                 <button
                   onClick={logout}
-                  className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white"
+                  className="bg-black hover:bg-brand-900 cursor-pointer rounded px-3 py-1 text-white"
                 >
                   Logout
                 </button>
@@ -88,7 +88,7 @@ export default function AppLayout() {
               <NavLink
                 to="/auth/login"
                 className={({ isActive }) =>
-                  isActive ? "bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white" : "bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white"
+                  isActive ? "bg-black hover:bg-brand-900 cursor-pointer rounded px-3 py-1 text-white" : "bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white"
                 }
               >
                 Login

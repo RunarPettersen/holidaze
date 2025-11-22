@@ -58,7 +58,7 @@ export default function ManagerVenues() {
                   )}
                 </div>
               </Link>
-              <div className="flex flex-1 flex-col gap-2 p-4">
+              <div className="flex flex-1 flex-col gap-2 p-4 bg-white">
                 <div>
                   <h3 className="font-semibold">{v.name}</h3>
                   <p className="text-sm text-gray-600">
