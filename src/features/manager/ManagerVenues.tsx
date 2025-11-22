@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
 
 import { useAuth } from "../auth/AuthContext";
 import { getManagedVenues, deleteVenue } from "../venues/api";
 import type { Venue } from "../venues/types";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function ManagerVenues() {
   const { user } = useAuth();
@@ -17,10 +19,13 @@ export default function ManagerVenues() {
     enabled: !!name,
   });
 
+  const [toDeleteId, setToDeleteId] = React.useState<string | null>(null);
+
   const mutation = useMutation({
     mutationFn: (id: string) => deleteVenue(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["managed-venues", name] });
+      setToDeleteId(null);
     },
   });
 
@@ -28,6 +33,17 @@ export default function ManagerVenues() {
   if (isError) return <p className="text-red-600">Error: {(error as Error).message}</p>;
 
   const venues = data ?? [];
+  const venueForDialog = toDeleteId ? venues.find(v => v.id === toDeleteId) : undefined;
+
+  async function confirmDelete() {
+    if (!toDeleteId) return;
+    try {
+      await mutation.mutateAsync(toDeleteId);
+    } finally {
+      // state nulles i onSuccess også, men greit å være defensiv
+      setToDeleteId(null);
+    }
+  }
 
   return (
     <div className="grid gap-4">
@@ -64,9 +80,7 @@ export default function ManagerVenues() {
                   <p className="text-sm text-gray-600">
                     {v.location?.city ?? ""} {v.location?.country ?? ""}
                   </p>
-                  <p className="text-sm">
-                    Max {v.maxGuests} guests • {v.price} NOK / night
-                  </p>
+                  <p className="text-sm">Max {v.maxGuests} guests • {v.price} NOK / night</p>
                 </div>
                 <div className="mt-2 flex justify-between gap-2 text-sm">
                   <button
@@ -83,14 +97,10 @@ export default function ManagerVenues() {
                   </button>
                   <button
                     className="rounded border px-4 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
-                    disabled={mutation.isPending}
-                    onClick={() => {
-                      const ok = window.confirm("Are you sure you want to delete this venue?");
-                      if (!ok) return;
-                      mutation.mutate(v.id);
-                    }}
+                    disabled={mutation.isPending && toDeleteId === v.id}
+                    onClick={() => setToDeleteId(v.id)}
                   >
-                    {mutation.isPending ? "Deleting…" : "Delete"}
+                    {mutation.isPending && toDeleteId === v.id ? "Deleting…" : "Delete"}
                   </button>
                 </div>
               </div>
@@ -98,6 +108,28 @@ export default function ManagerVenues() {
           ))}
         </ul>
       )}
+
+      <ConfirmDialog
+        open={!!toDeleteId}
+        title="Delete this venue?"
+        message={
+          venueForDialog ? (
+            <div>
+              <p className="mb-1">{venueForDialog.name}</p>
+              <p className="text-gray-600 text-sm">
+                This action cannot be undone and will remove the venue from your listings.
+              </p>
+            </div>
+          ) : (
+            "This action cannot be undone."
+          )
+        }
+        confirmLabel="Yes, delete"
+        cancelLabel="Cancel"
+        loading={mutation.isPending}
+        onConfirm={confirmDelete}
+        onClose={() => (!mutation.isPending ? setToDeleteId(null) : null)}
+      />
     </div>
   );
 }

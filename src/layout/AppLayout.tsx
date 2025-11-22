@@ -162,7 +162,7 @@ export default function AppLayout() {
                       setMenuOpen(false);
                       logout();
                     }}
-                    className="text-left rounded border px-3 py-1 hover:bg-gray-50"
+                    className="text-left rounded border px-3 py-1 bg-black text-white hover:bg-gray-50"
                   >
                     Logout
                   </button>
@@ -174,7 +174,7 @@ export default function AppLayout() {
                   to="/auth/login"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    isActive ? "text-brand-900 font-medium" : "bg-brand rounded px-3 py-2 text-white inline-block"
+                    isActive ? "text-brand-900 font-medium" : "bg-black rounded px-3 py-2 text-white inline-block"
                   }
                 >
                   Login

@@ -49,21 +49,21 @@ export default function Home() {
           <span className="font-medium">Popular:</span>
           <button
             type="button"
-            className="rounded-full border px-3 py-1 hover:bg-gray-50"
+            className="bg-white cursor-pointer rounded-full border px-3 py-1 hover:bg-gray-50"
             onClick={() => nav("/venues?q=bergen")}
           >
             Bergen
           </button>
           <button
             type="button"
-            className="rounded-full border px-3 py-1 hover:bg-gray-50"
+            className="bg-white cursor-pointer rounded-full border px-3 py-1 hover:bg-gray-50"
             onClick={() => nav("/venues?q=oslo")}
           >
             Oslo
           </button>
           <button
             type="button"
-            className="rounded-full border px-3 py-1 hover:bg-gray-50"
+            className="bg-white cursor-pointer rounded-full border px-3 py-1 hover:bg-gray-50"
             onClick={() => nav("/venues?q=mountain")}
           >
             Mountain cabins
