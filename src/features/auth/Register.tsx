@@ -40,7 +40,7 @@ export default function Register() {
       <label className="grid gap-1">
         <span>Name</span>
         <input
-          className="rounded border px-3 py-2"
+          className="rounded border px-3 py-2 bg-white"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -49,7 +49,7 @@ export default function Register() {
       <label className="grid gap-1">
         <span>Email (@stud.noroff.no)</span>
         <input
-          className="rounded border px-3 py-2"
+          className="rounded border px-3 py-2 bg-white"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -59,7 +59,7 @@ export default function Register() {
       <label className="grid gap-1">
         <span>Password</span>
         <input
-          className="rounded border px-3 py-2"
+          className="rounded border px-3 py-2 bg-white"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -77,7 +77,7 @@ export default function Register() {
       <label className="grid gap-1">
         <span>Avatar URL (optional)</span>
         <input
-          className="rounded border px-3 py-2"
+          className="rounded border px-3 py-2 bg-white"
           value={avatarUrl}
           onChange={(e) => setAvatarUrl(e.target.value)}
           placeholder="https://…"

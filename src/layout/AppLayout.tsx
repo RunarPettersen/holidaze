@@ -77,7 +77,7 @@ export default function AppLayout() {
 
                 <button
                   onClick={logout}
-                  className="bg-black hover:bg-brand-900 cursor-pointer rounded px-3 py-1 text-white"
+                  className="hover:bg-brand-100 cursor-pointer border rounded px-3 py-1 text-black"
                 >
                   Logout
                 </button>
