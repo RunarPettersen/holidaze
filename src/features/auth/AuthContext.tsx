@@ -26,7 +26,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function refresh() {
     const token = getToken();
-    if (!token) { setUser(null); return; }
+    if (!token) {
+      setUser(null);
+      return;
+    }
     try {
       // token inneholder brukernavn i payloaden i Noroff? Vi henter fra /auth/login-svar normalt,
       // men siden vi persisterer kun token lokalt her, legger vi et lite fallback:
@@ -34,7 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const name = localStorage.getItem("holidaze:username") ?? "";
       if (!name) return;
       const p = await getProfile(name);
-      setUser({ name: p.name, email: p.email, venueManager: p.venueManager, avatarUrl: p.avatar?.url });
+      setUser({
+        name: p.name,
+        email: p.email,
+        venueManager: p.venueManager,
+        avatarUrl: p.avatar?.url,
+      });
     } catch {
       setUser(null);
       clearToken();
@@ -53,7 +61,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await loginUser({ email, password });
     setToken(res.accessToken);
     localStorage.setItem("holidaze:username", res.name);
-    setUser({ name: res.name, email: res.email, venueManager: res.venueManager, avatarUrl: res.avatar?.url });
+
+    try {
+      const p = await getProfile(res.name);
+      setUser({
+        name: p.name,
+        email: p.email,
+        venueManager: p.venueManager,
+        avatarUrl: p.avatar?.url,
+      });
+    } catch {
+      setUser({
+        name: res.name,
+        email: res.email,
+        venueManager: res.venueManager,
+        avatarUrl: res.avatar?.url,
+      });
+    }
   };
 
   const logout = () => {
