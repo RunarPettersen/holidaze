@@ -1,35 +1,43 @@
 import type { VenueMeta } from "../features/venues/types";
+import type { IconType } from "react-icons";
+import { FiWifi } from "react-icons/fi";
+import { MdOutlineLocalParking, MdOutlineFreeBreakfast, MdPets } from "react-icons/md";
 
-type Props = { meta?: VenueMeta };
+type Props = {
+  meta?: VenueMeta;
+};
+
+const AMENITIES: { key: keyof VenueMeta; label: string; Icon: IconType }[] = [
+  { key: "wifi",      label: "Wi-Fi",        Icon: FiWifi },
+  { key: "parking",   label: "Parking",      Icon: MdOutlineLocalParking },
+  { key: "breakfast", label: "Breakfast",    Icon: MdOutlineFreeBreakfast },
+  { key: "pets",      label: "Pets allowed", Icon: MdPets },
+];
 
 export default function Amenities({ meta }: Props) {
-  const items = [
-    { key: "wifi" as const, label: "Wi-Fi" },
-    { key: "parking" as const, label: "Parking" },
-    { key: "breakfast" as const, label: "Breakfast" },
-    { key: "pets" as const, label: "Pets allowed" },
-  ];
+  if (!meta) return null;
 
-  const shown = items.filter((i) => meta?.[i.key]);
-  const hasAny = shown.length > 0;
+  const enabled = AMENITIES.filter((item) => meta[item.key]);
+
+  if (enabled.length === 0) return null;
 
   return (
-    <section className="rounded-xl border bg-white p-4">
-      <h3 className="mb-2 text-base font-semibold">Amenities</h3>
-      {hasAny ? (
-        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {shown.map(({ key, label }) => (
-            <li key={key} className="flex items-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" className="text-brand-900" aria-hidden="true">
-                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>{label}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-sm text-gray-600">No amenities listed.</p>
-      )}
+    <section className="rounded-2xl border bg-white p-4 sm:p-6">
+      <h2 className="mb-3 text-lg font-semibold text-ink">Amenities</h2>
+
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {enabled.map(({ key, label, Icon }) => (
+          <li
+            key={key}
+            className="flex items-center gap-2 text-sm text-gray-800"
+          >
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-100">
+              <Icon className="h-4 w-4" />
+            </span>
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

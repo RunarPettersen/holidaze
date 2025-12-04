@@ -84,7 +84,7 @@ export async function getLatestVenues(take = 5, params?: { q?: string }) {
 export async function getVenueById(id: string) {
   return api<Venue & { bookings?: VenueBooking[] }>(
     `/holidaze/venues/${id}`,
-    { query: { _bookings: true } }
+    { query: { _bookings: true, _owner: true } }  // ← lagt til _owner: true
   );
 }
 

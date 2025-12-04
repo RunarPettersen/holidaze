@@ -20,6 +20,17 @@ export type VenueLocation = {
   lng?: number;
 };
 
+export type VenueOwnerAvatar = {
+  url: string;
+  alt?: string;
+};
+
+export type VenueOwner = {
+  name: string;
+  email?: string;
+  avatar?: VenueOwnerAvatar;
+};
+
 export type Venue = {
   id: string;
   name: string;
@@ -30,6 +41,7 @@ export type Venue = {
   maxGuests: number;
   meta?: VenueMeta;
   location?: VenueLocation;
+  owner?: VenueOwner;   // ← viktig
   created?: string;
   updated?: string;
 };

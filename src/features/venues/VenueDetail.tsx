@@ -35,6 +35,28 @@ export default function VenueDetail() {
       <Gallery images={images} venueName={data.name} />
       <HeaderBlock venue={data} />
       <Amenities meta={data.meta} />
+
+      {data.owner && (
+        <section className="grid gap-2 rounded-xl border bg-white p-4">
+          <h2 className="text-base font-semibold">Venue listed by</h2>
+          <div className="mt-1 flex items-center gap-3 text-sm">
+            {data.owner.avatar?.url && (
+              <img
+                src={data.owner.avatar.url}
+                alt={data.owner.avatar.alt || data.owner.name}
+                className="h-10 w-10 rounded-full object-cover border"
+              />
+            )}
+            <div>
+              <p className="font-medium">{data.owner.name}</p>
+              {data.owner.email && (
+                <p className="text-gray-600">{data.owner.email}</p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       <BookingForm venueId={data.id} maxGuests={data.maxGuests} existing={existing} />
     </article>
   );
