@@ -42,7 +42,7 @@ export default function BookingCard({ booking, onCancelClick, cancelPending }: P
 
           {isUpcoming(booking.dateTo) && onCancelClick && (
             <button
-              className="rounded border px-3 py-1 text-red-600 hover:bg-red-50 disabled:opacity-50"
+              className="rounded border px-3 py-1 text-red-600 cursor-pointer hover:bg-red-50 disabled:opacity-50"
               disabled={!!cancelPending}
               onClick={() => onCancelClick(booking.id)}
             >

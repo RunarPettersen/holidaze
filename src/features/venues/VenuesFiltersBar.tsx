@@ -90,7 +90,7 @@ export default function VenuesFiltersBar({
             <span className="font-medium">Search</span>
             <input
               className="rounded border px-3 py-2"
-              placeholder="City, venue name…"
+              placeholder="City, country, venue name…"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />

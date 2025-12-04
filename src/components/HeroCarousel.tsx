@@ -33,7 +33,6 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
   useEffect(() => {
     if (count < 2) return;
 
-    // rydde opp eventuell gammel timer
     if (timer.current) window.clearTimeout(timer.current);
 
     timer.current = window.setTimeout(next, intervalMs);
@@ -41,7 +40,7 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
     return () => {
       if (timer.current) window.clearTimeout(timer.current);
     };
-  }, [count, intervalMs, next]); // next er nå stabil (useCallback), så lint er fornøyd
+  }, [count, intervalMs, next]);
 
   if (count === 0) return null;
 
@@ -71,11 +70,14 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
             <div
               key={v.id}
               className={`absolute inset-0 transition-opacity duration-700 ${
-                active ? "opacity-100" : "opacity-0"
+                active
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
               }`}
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${count}`}
+              aria-hidden={!active}
             >
               {/* image */}
               <div className="absolute inset-0">
@@ -118,14 +120,14 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
             <button
               aria-label="Previous"
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
+              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 cursor-pointer p-2 text-white hover:bg-black/55"
             >
               ‹
             </button>
             <button
               aria-label="Next"
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 cursor-pointer p-2 text-white hover:bg-black/55"
             >
               ›
             </button>
