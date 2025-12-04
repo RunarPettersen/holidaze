@@ -70,7 +70,7 @@ export default function ManagerVenueBookings() {
             </thead>
             <tbody>
               {upcoming.map((b) => (
-                <tr key={b.id} className="border-t">
+                <tr key={b.id} className="border-t bg-white">
                   <td className="px-4 py-2">
                     {fmt(b.dateFrom)} – {fmt(b.dateTo)}
                   </td>
