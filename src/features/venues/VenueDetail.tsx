@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
-import { getVenueById } from "./api";
+import { getVenueById, type VenueBooking } from "./api";
 import type { Venue } from "./types";
 import BookingForm from "./BookingForm";
 
@@ -10,7 +10,7 @@ import Amenities from "../../components/Amenities";
 import HeaderBlock from "../../components/HeaderBlock";
 
 type FullVenue = Venue & {
-  bookings?: { dateFrom: string; dateTo: string }[];
+  bookings?: VenueBooking[];
 };
 
 export default function VenueDetail() {
@@ -28,7 +28,11 @@ export default function VenueDetail() {
 
   const images = data.media ?? [];
   const existing =
-    data.bookings?.map((b) => ({ dateFrom: b.dateFrom, dateTo: b.dateTo })) ?? [];
+    data.bookings?.map((b) => ({
+      dateFrom: b.dateFrom,
+      dateTo: b.dateTo,
+      customerName: b.customer?.name ?? undefined,
+    })) ?? [];
 
   return (
     <article className="grid gap-6">
@@ -57,7 +61,11 @@ export default function VenueDetail() {
         </section>
       )}
 
-      <BookingForm venueId={data.id} maxGuests={data.maxGuests} existing={existing} />
+      <BookingForm
+        venueId={data.id}
+        maxGuests={data.maxGuests}
+        existing={existing}
+      />
     </article>
   );
 }

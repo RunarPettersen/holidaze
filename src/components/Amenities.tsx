@@ -31,7 +31,7 @@ export default function Amenities({ meta }: Props) {
             key={key}
             className="flex items-center gap-2 text-sm text-gray-800"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-100">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full">
               <Icon className="h-4 w-4" />
             </span>
             <span>{label}</span>
