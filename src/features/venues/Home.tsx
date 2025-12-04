@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { getVenues } from "./api";
+import { getLatestVenues } from "./api";
 import type { Venue } from "./types";
 import HeroCarousel from "../../components/HeroCarousel";
 
@@ -12,19 +12,16 @@ export default function Home() {
 
   // Hent 5 nyeste (API-rekkefølge + sort fallback på created om feltet finnes)
   const { data, isLoading, isError } = useQuery<Venue[]>({
-    queryKey: ["featured-venues"],
-    queryFn: () => getVenues({ page: 1, limit: 5 }),
+    queryKey: ["featured-venues", "latest-5"],
+    queryFn: () => getLatestVenues(5),
   });
 
-  const featured =
-    (data ?? [])
-      .slice()
-      .sort((a, b) => {
-        const ca = (a as any).created ?? "";
-        const cb = (b as any).created ?? "";
-        // nyeste først hvis created finnes, ellers beholder rekkefølgen
-        return cb.localeCompare(ca);
-      });
+  const featured = (data ?? []).slice().sort((a, b) => {
+    const ca = a.created ?? "";
+    const cb = b.created ?? "";
+    // nyeste først hvis created finnes, ellers beholder rekkefølgen
+    return cb.localeCompare(ca);
+  });
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,7 +38,7 @@ export default function Home() {
       {/* Hero carousel */}
       <div className="mx-auto w-full max-w-6xl px-4">
         {isLoading ? (
-          <div className="h-[380px] sm:h-[440px] w-full animate-pulse rounded-2xl border bg-gray-200" />
+          <div className="h-[380px] w-full animate-pulse rounded-2xl border bg-gray-200 sm:h-[440px]" />
         ) : isError ? (
           <div className="rounded-2xl border bg-white p-4 text-sm text-red-600">
             Couldn’t load featured venues.
@@ -53,14 +50,14 @@ export default function Home() {
 
       {/* Søk + promosnutten din */}
       <div className="mx-auto w-full max-w-6xl px-4">
-        <div className="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)] items-center">
+        <div className="grid items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]">
           <div className="space-y-6">
             <h1 className="text-3xl font-semibold md:text-4xl">
               Find your next stay with Holidaze
             </h1>
-            <p className="text-gray-600 max-w-xl">
-              Browse unique venues across Norway and beyond. Whether you&apos;re
-              planning a weekend getaway or a longer trip, we&apos;ve got you covered.
+            <p className="max-w-xl text-gray-600">
+              Browse unique venues across Norway and beyond. Whether you&apos;re planning a weekend
+              getaway or a longer trip, we&apos;ve got you covered.
             </p>
 
             <form
@@ -75,7 +72,7 @@ export default function Home() {
               />
               <button
                 type="submit"
-                className="rounded bg-brand px-4 py-2 text-sm font-medium text-white"
+                className="bg-brand rounded px-4 py-2 text-sm font-medium text-white"
               >
                 Search venues
               </button>
@@ -85,21 +82,28 @@ export default function Home() {
               <span className="font-medium">Popular:</span>
               <button
                 type="button"
-                className="bg-white cursor-pointer rounded-full border px-3 py-1 hover:bg-gray-50"
+                className="cursor-pointer rounded-full border bg-white px-3 py-1 hover:bg-gray-50"
                 onClick={() => nav("/venues?q=bergen")}
               >
                 Bergen
               </button>
               <button
                 type="button"
-                className="bg-white cursor-pointer rounded-full border px-3 py-1 hover:bg-gray-50"
+                className="cursor-pointer rounded-full border bg-white px-3 py-1 hover:bg-gray-50"
                 onClick={() => nav("/venues?q=oslo")}
               >
                 Oslo
               </button>
               <button
                 type="button"
-                className="bg-white cursor-pointer rounded-full border px-3 py-1 hover:bg-gray-50"
+                className="cursor-pointer rounded-full border bg-white px-3 py-1 hover:bg-gray-50"
+                onClick={() => nav("/venues?q=vadsø")}
+              >
+                Vadsø
+              </button>
+              <button
+                type="button"
+                className="cursor-pointer rounded-full border bg-white px-3 py-1 hover:bg-gray-50"
                 onClick={() => nav("/venues?q=mountain")}
               >
                 Mountain cabins
@@ -108,16 +112,16 @@ export default function Home() {
           </div>
 
           <div className="hidden md:block">
-            <div className="relative h-64 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-brand/10 via-blue-100 to-emerald-100">
+            <div className="from-brand/10 relative h-64 w-full overflow-hidden rounded-2xl bg-gradient-to-br via-blue-100 to-emerald-100">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#ffffff,_transparent_50%)]" />
               <div className="absolute bottom-6 left-6 space-y-2">
-                <p className="text-xs uppercase tracking-wide text-gray-500">Plan ahead</p>
+                <p className="text-xs tracking-wide text-gray-500 uppercase">Plan ahead</p>
                 <p className="text-lg font-semibold text-gray-800">
                   Book early and never miss your perfect stay.
                 </p>
                 <Link
                   to="/venues"
-                  className="inline-flex rounded bg-white px-3 py-1 text-xs font-medium text-brand shadow-sm"
+                  className="text-brand inline-flex rounded bg-white px-3 py-1 text-xs font-medium shadow-sm"
                 >
                   Browse all venues
                 </Link>

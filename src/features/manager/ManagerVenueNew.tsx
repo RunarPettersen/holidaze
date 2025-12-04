@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 import { createVenue, type VenuePayload } from "../venues/api";
 import VenueForm, { type VenueFormValues } from "./VenueForm";
+
+const MAX_PRICE = 10_000;
 
 function toPayload(values: VenueFormValues): VenuePayload {
   const rating =
@@ -32,13 +35,14 @@ function toPayload(values: VenueFormValues): VenuePayload {
       breakfast: values.breakfast,
       pets: values.pets,
     },
-    rating, // optional (0–5). Omitted if empty.
+    rating,
   };
 }
 
 export default function ManagerVenueNew() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [priceError, setPriceError] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: (values: VenueFormValues) => createVenue(toPayload(values)),
@@ -54,8 +58,25 @@ export default function ManagerVenueNew() {
       <VenueForm
         submitLabel="Create venue"
         submitting={mutation.isPending}
-        onSubmit={(values) => mutation.mutate(values)}
+        onSubmit={(values) => {
+          const price = Number(values.price);
+
+          if (price > MAX_PRICE) {
+            setPriceError(
+              "Price cannot be higher than 10 000 NOK (API limit). Please lower the price.",
+            );
+            return;
+          }
+
+          setPriceError(null);
+          mutation.mutate(values);
+        }}
       />
+
+      {priceError && (
+        <p className="text-sm text-red-600">{priceError}</p>
+      )}
+
       {mutation.isError && (
         <p className="text-sm text-red-600">
           Error: {(mutation.error as Error).message}

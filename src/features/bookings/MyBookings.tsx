@@ -30,8 +30,8 @@ export default function MyBookings() {
   const mutation = useMutation({
     mutationFn: (id: string) => cancelBooking(id),
     onSuccess: () => {
+      // Invalider én felles key for alle steder som viser mine bookinger
       qc.invalidateQueries({ queryKey: ["my-bookings", name] });
-      qc.invalidateQueries({ queryKey: ["my-bookings-count", name] });
     },
   });
 

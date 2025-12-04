@@ -30,6 +30,6 @@ export type Venue = {
   maxGuests: number;
   meta?: VenueMeta;
   location?: VenueLocation;
-  created: string;
+  created?: string;
   updated?: string;
 };

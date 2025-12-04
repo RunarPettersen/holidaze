@@ -9,7 +9,7 @@ import { isUpcoming } from "../lib/date";
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const { data: myBookings } = useQuery({
-    queryKey: ["my-bookings-count", user?.name],
+    queryKey: ["my-bookings", user?.name],
     queryFn: () => getMyBookings(user?.name ?? ""),
     enabled: !!user?.name,
   });
@@ -29,8 +29,8 @@ export default function AppLayout() {
     isActive ? "text-brand-900 font-medium" : "text-black hover:underline";
 
   return (
-    <div className="min-h-screen bg-surface text-ink flex flex-col">
-      <header className="sticky top-0 border-b bg-white/80 backdrop-blur z-50">
+    <div className="bg-surface text-ink flex min-h-screen flex-col">
+      <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2" onClick={() => setMenuOpen(false)}>
@@ -44,7 +44,7 @@ export default function AppLayout() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-4 text-sm">
+          <nav className="hidden items-center gap-4 text-sm md:flex">
             <NavLink to="/venues" className={({ isActive }) => linkClass(isActive)}>
               Venues
             </NavLink>
@@ -70,14 +70,14 @@ export default function AppLayout() {
                     <img
                       src={user.avatarUrl}
                       alt={user.name}
-                      className="h-8 w-8 rounded-full object-cover border"
+                      className="h-8 w-8 rounded-full border object-cover"
                     />
                   </NavLink>
                 )}
 
                 <button
                   onClick={logout}
-                  className="hover:bg-brand-100 cursor-pointer border rounded px-3 py-1 text-black"
+                  className="hover:bg-brand-100 cursor-pointer rounded border px-3 py-1 text-black"
                 >
                   Logout
                 </button>
@@ -88,7 +88,9 @@ export default function AppLayout() {
               <NavLink
                 to="/auth/login"
                 className={({ isActive }) =>
-                  isActive ? "bg-black hover:bg-brand-900 cursor-pointer rounded px-3 py-1 text-white" : "bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white"
+                  isActive
+                    ? "hover:bg-brand-900 cursor-pointer rounded bg-black px-3 py-1 text-white"
+                    : "bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-3 py-1 text-white"
                 }
               >
                 Login
@@ -99,7 +101,7 @@ export default function AppLayout() {
           {/* Mobile hamburger */}
           <button
             type="button"
-            className="md:hidden inline-flex items-center justify-center rounded p-2 hover:bg-gray-100"
+            className="inline-flex items-center justify-center rounded p-2 hover:bg-gray-100 md:hidden"
             aria-label="Toggle menu"
             aria-controls="mobile-menu"
             aria-expanded={menuOpen}
@@ -108,11 +110,21 @@ export default function AppLayout() {
             {/* Hamburger / Close icons */}
             {!menuOpen ? (
               <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path
+                  d="M4 7h16M4 12h16M4 17h16"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             ) : (
               <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path
+                  d="M6 6l12 12M18 6l-12 12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             )}
           </button>
@@ -122,7 +134,7 @@ export default function AppLayout() {
         {/* Overlay to close on click outside */}
         {menuOpen && (
           <div
-            className="md:hidden fixed inset-0 bg-black/40"
+            className="fixed inset-0 bg-black/40 md:hidden"
             onClick={() => setMenuOpen(false)}
             aria-hidden="true"
           />
@@ -130,30 +142,46 @@ export default function AppLayout() {
 
         <div
           id="mobile-menu"
-          className={`md:hidden absolute left-0 right-0 top-full origin-top bg-white border-b shadow-sm transition-transform ${
+          className={`absolute top-full right-0 left-0 origin-top border-b bg-white shadow-sm transition-transform md:hidden ${
             menuOpen ? "scale-y-100" : "scale-y-0"
           }`}
           style={{ transformOrigin: "top" }}
         >
           <div className="mx-auto max-w-6xl px-4 py-4">
             <div className="flex flex-col gap-3 text-sm">
-              <NavLink to="/venues" onClick={() => setMenuOpen(false)} className={({ isActive }) => linkClass(isActive)}>
+              <NavLink
+                to="/venues"
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) => linkClass(isActive)}
+              >
                 Venues
               </NavLink>
 
               {user && (
                 <>
                   {user.venueManager && (
-                    <NavLink to="/manager/venues" onClick={() => setMenuOpen(false)} className={({ isActive }) => linkClass(isActive)}>
+                    <NavLink
+                      to="/manager/venues"
+                      onClick={() => setMenuOpen(false)}
+                      className={({ isActive }) => linkClass(isActive)}
+                    >
                       Manage venues
                     </NavLink>
                   )}
 
-                  <NavLink to="/bookings" onClick={() => setMenuOpen(false)} className={({ isActive }) => linkClass(isActive)}>
+                  <NavLink
+                    to="/bookings"
+                    onClick={() => setMenuOpen(false)}
+                    className={({ isActive }) => linkClass(isActive)}
+                  >
                     My bookings{upcomingCount ? ` (${upcomingCount})` : ""}
                   </NavLink>
 
-                  <NavLink to="/profile" onClick={() => setMenuOpen(false)} className={({ isActive }) => linkClass(isActive)}>
+                  <NavLink
+                    to="/profile"
+                    onClick={() => setMenuOpen(false)}
+                    className={({ isActive }) => linkClass(isActive)}
+                  >
                     Profile
                   </NavLink>
 
@@ -162,7 +190,7 @@ export default function AppLayout() {
                       setMenuOpen(false);
                       logout();
                     }}
-                    className="text-left rounded border px-3 py-1 bg-black text-white hover:bg-gray-50"
+                    className="rounded border bg-black px-3 py-1 text-left text-white hover:bg-gray-50"
                   >
                     Logout
                   </button>
@@ -174,7 +202,9 @@ export default function AppLayout() {
                   to="/auth/login"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    isActive ? "text-brand-900 font-medium" : "bg-black rounded px-3 py-2 text-white inline-block"
+                    isActive
+                      ? "text-brand-900 font-medium"
+                      : "inline-block rounded bg-black px-3 py-2 text-white"
                   }
                 >
                   Login

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Venue } from "../features/venues/types";
 
@@ -12,18 +12,36 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
   const timer = useRef<number | null>(null);
 
   const count = venues.length;
-  const goTo = (i: number) => setIdx((i + count) % count);
-  const next = () => goTo(idx + 1);
-  const prev = () => goTo(idx - 1);
+
+  const goTo = useCallback(
+    (i: number) => {
+      if (count === 0) return;
+      setIdx((i + count) % count);
+    },
+    [count]
+  );
+
+  const next = useCallback(() => {
+    goTo(idx + 1);
+  }, [goTo, idx]);
+
+  const prev = useCallback(() => {
+    goTo(idx - 1);
+  }, [goTo, idx]);
 
   // auto-play (pause on hover/focus)
   useEffect(() => {
     if (count < 2) return;
+
+    // rydde opp eventuell gammel timer
+    if (timer.current) window.clearTimeout(timer.current);
+
     timer.current = window.setTimeout(next, intervalMs);
+
     return () => {
       if (timer.current) window.clearTimeout(timer.current);
     };
-  }, [idx, count, intervalMs]); // re-arm on index change
+  }, [count, intervalMs, next]); // next er nå stabil (useCallback), så lint er fornøyd
 
   if (count === 0) return null;
 
@@ -52,7 +70,9 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
           return (
             <div
               key={v.id}
-              className={`absolute inset-0 transition-opacity duration-700 ${active ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 transition-opacity duration-700 ${
+                active ? "opacity-100" : "opacity-0"
+              }`}
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${count}`}
@@ -121,7 +141,9 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
               key={i}
               aria-label={`Go to slide ${i + 1}`}
               onClick={() => goTo(i)}
-              className={`h-2.5 w-2.5 rounded-full ${i === idx ? "bg-white" : "bg-white/50 hover:bg-white/80"}`}
+              className={`h-2.5 w-2.5 rounded-full ${
+                i === idx ? "bg-white" : "bg-white/50 hover:bg-white/80"
+              }`}
             />
           ))}
         </div>

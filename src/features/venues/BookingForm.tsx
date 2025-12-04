@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createBooking } from "../bookings/api";
 import { overlaps } from "../../lib/date";
 import { useAuth } from "../auth/AuthContext";
+import type { Booking } from "../bookings/types";
 
 type ExistingBooking = { dateFrom: string; dateTo: string };
 
@@ -16,6 +17,7 @@ export default function BookingForm({
   existing: ExistingBooking[];
 }) {
   const { user } = useAuth();
+  const name = user?.name ?? "";
   const qc = useQueryClient();
   const today = new Date().toISOString().slice(0, 10);
 
@@ -30,22 +32,30 @@ export default function BookingForm({
     return existing.some((b) => overlaps(dateFrom, dateTo, b.dateFrom, b.dateTo));
   }, [dateFrom, dateTo, existing]);
 
-  const mutation = useMutation({
+  const mutation = useMutation<Booking, unknown, void>({
     mutationFn: () => createBooking({ venueId, dateFrom, dateTo, guests }),
-    onSuccess: () => {
+    onSuccess: (newBooking) => {
       setOk("Booking confirmed!");
       setError(null);
 
-      // refresh mine bookinger og venue-detalj
-      qc.invalidateQueries({ queryKey: ["my-bookings"] });
+      // Oppdater mine bookinger + header
+      if (name) {
+        // optimistisk oppdatering, så antallet hopper opp med én gang
+        qc.setQueryData<Booking[]>(["my-bookings", name], (old) =>
+          old ? [...old, newBooking] : [newBooking]
+        );
+
+        // refetch for å være i sync med server
+        qc.invalidateQueries({ queryKey: ["my-bookings", name] });
+      }
+
+      // refresh venue-detalj (f.eks. tilgjengelige datoer)
       qc.invalidateQueries({ queryKey: ["venue", venueId] });
 
       // reset form so “overlap” doesn't show with the just-booked dates
       setDateFrom("");
       setDateTo("");
       setGuests(1);
-      // optional: auto-hide success after a few seconds
-      // setTimeout(() => setOk(null), 4000);
     },
     onError: (err: unknown) => {
       setOk(null);
@@ -120,7 +130,9 @@ export default function BookingForm({
 
       <div>
         <button
-          className={`bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white ${disabled ? "bg-gray-400" : "bg-brand"}`}
+          className={`bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-white ${
+            disabled ? "bg-gray-400" : "bg-brand"
+          }`}
           disabled={disabled || mutation.isPending}
           onClick={() => mutation.mutate()}
         >

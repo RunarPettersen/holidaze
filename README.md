@@ -3,7 +3,7 @@
 Modern accommodation booking frontend for the Noroff Holidaze API.  
 Built with React + TypeScript, Vite, Tailwind, React Query and React Router.
 
-Live demo: <add your deploy link here>
+Live demo: https://holidazeforlife.netlify.app/
 
 ## Features
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -5,14 +6,15 @@ import { getVenueById, updateVenue, type VenuePayload } from "../venues/api";
 import type { Venue } from "../venues/types";
 import VenueForm, { type VenueFormValues } from "./VenueForm";
 
+const MAX_PRICE = 10_000;
+
 function fromVenueToFormValues(v: Venue): VenueFormValues {
   return {
     name: v.name,
     description: v.description ?? "",
     price: String(v.price),
     maxGuests: String(v.maxGuests),
-    rating: v.rating != null ? String(v.rating) : "", // ← add
-    // map alle eksisterende bilder til formens struktur
+    rating: v.rating != null ? String(v.rating) : "",
     media: (v.media ?? []).map((m) => ({
       url: m.url ?? "",
       alt: m.alt ?? "",
@@ -38,8 +40,7 @@ function toPayload(values: VenueFormValues): VenuePayload {
     description: values.description,
     price: Number(values.price),
     maxGuests: Number(values.maxGuests),
-    rating, // ← add (optional 0–5)
-    // send alle gyldige bilder (trim og filtrer tomme)
+    rating,
     media: values.media
       .filter((m) => m.url && m.url.trim().length > 0)
       .map((m) => ({
@@ -64,6 +65,7 @@ export default function ManagerVenueEdit() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [priceError, setPriceError] = useState<string | null>(null);
 
   const { data, isLoading, isError, error } = useQuery<Venue>({
     queryKey: ["venue", id],
@@ -74,7 +76,6 @@ export default function ManagerVenueEdit() {
   const mutation = useMutation({
     mutationFn: (values: VenueFormValues) => updateVenue(id, toPayload(values)),
     onSuccess: () => {
-      // oppdater cache og gå tilbake til oversikten
       qc.invalidateQueries({ queryKey: ["venue", id] });
       qc.invalidateQueries({ queryKey: ["managed-venues"] });
       navigate("/manager/venues");
@@ -96,8 +97,25 @@ export default function ManagerVenueEdit() {
         initialValues={fromVenueToFormValues(data)}
         submitLabel="Save changes"
         submitting={mutation.isPending}
-        onSubmit={(values) => mutation.mutate(values)}
+        onSubmit={(values) => {
+          const price = Number(values.price);
+
+          if (price > MAX_PRICE) {
+            setPriceError(
+              "Price cannot be higher than 10 000 NOK (API limit). Please lower the price.",
+            );
+            return;
+          }
+
+          setPriceError(null);
+          mutation.mutate(values);
+        }}
       />
+
+      {priceError && (
+        <p className="text-sm text-red-600">{priceError}</p>
+      )}
+
       {mutation.isError && (
         <p className="text-sm text-red-600">
           Error: {(mutation.error as Error).message}

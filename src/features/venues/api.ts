@@ -59,6 +59,28 @@ export async function getAllVenues(params?: { q?: string }) {
   return all;
 }
 
+export async function getLatestVenues(take = 5, params?: { q?: string }) {
+  // henter opptil 100 (din getAllVenues gjør paginering)
+  const all = await getAllVenues({ q: params?.q });
+
+  const sorted = all.slice().sort((a, b) => {
+    const ad =
+      (a.created ? Date.parse(a.created) : 0) ||
+      (a.updated ? Date.parse(a.updated) : 0) ||
+      0;
+    const bd =
+      (b.created ? Date.parse(b.created) : 0) ||
+      (b.updated ? Date.parse(b.updated) : 0) ||
+      0;
+
+    // nyeste først; fallback hvis begge = 0: navn desc for å unngå “Z-bias”
+    if (bd !== ad) return bd - ad;
+    return (b.name || "").localeCompare(a.name || "");
+  });
+
+  return sorted.slice(0, take);
+}
+
 export async function getVenueById(id: string) {
   return api<Venue & { bookings?: VenueBooking[] }>(
     `/holidaze/venues/${id}`,

@@ -21,19 +21,22 @@ export default function ConfirmDialog({
   onClose,
   loading,
 }: Props) {
+  React.useEffect(() => {
+    if (!open) return;
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   if (!open) return null;
 
   function onBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
     if (e.target === e.currentTarget) onClose();
   }
-
-  React.useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
 
   return (
     <div
