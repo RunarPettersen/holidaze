@@ -3,16 +3,27 @@ import { useParams } from "react-router-dom";
 
 import { getVenueById, type VenueBooking } from "./api";
 import type { Venue } from "./types";
+import type { ExistingBooking } from "./bookingTypes";
 import BookingForm from "./BookingForm";
 
 import Gallery from "../../components/Gallery";
 import Amenities from "../../components/Amenities";
 import HeaderBlock from "../../components/HeaderBlock";
 
+/**
+ * Full venue object as returned from the API when we include bookings.
+ */
 type FullVenue = Venue & {
   bookings?: VenueBooking[];
 };
 
+/**
+ * Venue detail page
+ *
+ * - Fetches a single venue (including its bookings)
+ * - Shows gallery, basic info and amenities
+ * - Renders the booking form and passes existing bookings down
+ */
 export default function VenueDetail() {
   const { id = "" } = useParams();
 
@@ -27,7 +38,13 @@ export default function VenueDetail() {
   if (!data) return <p>Venue not found.</p>;
 
   const images = data.media ?? [];
-  const existing =
+
+  /**
+   * Existing bookings for this venue, shaped for the BookingForm.
+   * Includes the customer name so the form can highlight the
+   * current user's own bookings.
+   */
+  const existing: ExistingBooking[] =
     data.bookings?.map((b) => ({
       dateFrom: b.dateFrom,
       dateTo: b.dateTo,

@@ -4,7 +4,7 @@ import type { Venue } from "../features/venues/types";
 
 type Props = {
   venues: Venue[];
-  intervalMs?: number; // auto-advance, default 6000
+  intervalMs?: number;
 };
 
 export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {

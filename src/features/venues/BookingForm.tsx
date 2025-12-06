@@ -1,32 +1,39 @@
 import { useState, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { createBooking } from "../bookings/api";
-import { overlaps, fmt } from "../../lib/date";
+import { fmt } from "../../lib/date";
 import { useAuth } from "../auth/AuthContext";
 import type { Booking } from "../bookings/types";
+import type { ExistingBooking } from "./bookingTypes";
+import {
+  addDays,
+  hasOverlappingBooking,
+  isInvalidRange,
+  getMyUpcomingBookings,
+} from "./bookingUtils";
 
-type ExistingBooking = {
-  dateFrom: string;
-  dateTo: string;
-  customerName?: string;
+type Props = {
+  venueId: string;
+  maxGuests: number;
+  existing: ExistingBooking[];
 };
 
-// helper: add days to an ISO date string (YYYY-MM-DD)
-function addDays(dateStr: string, days: number): string {
-  const d = new Date(dateStr);
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
+/**
+ * Booking form for a single venue.
+ *
+ * Handles:
+ * - date range selection with minimum 1 night
+ * - guest count and validation
+ * - overlap detection against existing bookings
+ * - displaying the user's own upcoming bookings on this venue
+ * - creating a booking via the Noroff Holidaze API
+ */
 export default function BookingForm({
   venueId,
   maxGuests,
   existing = [],
-}: {
-  venueId: string;
-  maxGuests: number;
-  existing: ExistingBooking[];
-}) {
+}: Props) {
   const { user } = useAuth();
   const userName = user?.name ?? "";
   const qc = useQueryClient();
@@ -40,26 +47,21 @@ export default function BookingForm({
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null); // shows success banner
 
-  // kollisjon med andre bookinger på dette venue
-  const hasOverlap = useMemo(() => {
-    if (!dateFrom || !dateTo) return false;
-    return existing.some((b) => overlaps(dateFrom, dateTo, b.dateFrom, b.dateTo));
-  }, [dateFrom, dateTo, existing]);
+  // Derived state
+  const hasOverlap = useMemo(
+    () => hasOverlappingBooking(dateFrom, dateTo, existing),
+    [dateFrom, dateTo, existing],
+  );
 
-  // checkout må være etter checkin
-  const invalidRange =
-    dateFrom && dateTo ? new Date(dateTo) <= new Date(dateFrom) : false;
+  const invalidRange = useMemo(
+    () => isInvalidRange(dateFrom, dateTo),
+    [dateFrom, dateTo],
+  );
 
-  // dine kommende bookinger på dette venue
-  const myUpcomingBookings = useMemo(() => {
-    if (!userName) return [];
-    const todayDate = new Date(today);
-
-    return existing.filter((b) => {
-      if (!b.customerName || b.customerName !== userName) return false;
-      return new Date(b.dateTo) >= todayDate; // bare fremtid / pågående
-    });
-  }, [existing, userName, today]);
+  const myUpcomingBookings = useMemo(
+    () => getMyUpcomingBookings(existing, userName, today),
+    [existing, userName, today],
+  );
 
   const mutation = useMutation<Booking, unknown, void>({
     mutationFn: () => createBooking({ venueId, dateFrom, dateTo, guests }),
@@ -68,27 +70,28 @@ export default function BookingForm({
       setError(null);
 
       if (userName) {
-        // optimistisk oppdatering av mine bookinger
+        // Optimistic update of "My bookings"
         qc.setQueryData<Booking[]>(["my-bookings", userName], (old) =>
-          old ? [...old, newBooking] : [newBooking]
+          old ? [...old, newBooking] : [newBooking],
         );
 
-        // refetch begge for å være i sync med server + header-teller
+        // Re-fetch to keep everything in sync (including header count)
         qc.invalidateQueries({ queryKey: ["my-bookings", userName] });
         qc.invalidateQueries({ queryKey: ["my-bookings-count", userName] });
       }
 
-      // refresh venue-detalj (bookings osv.)
+      // Refresh venue details (bookings / availability)
       qc.invalidateQueries({ queryKey: ["venue", venueId] });
 
-      // reset form
+      // Reset form
       setDateFrom(today);
       setDateTo(tomorrow);
       setGuests(1);
     },
     onError: (err: unknown) => {
       setOk(null);
-      const message = err instanceof Error ? err.message : "Could not create booking";
+      const message =
+        err instanceof Error ? err.message : "Could not create booking";
       setError(message);
     },
   });
@@ -112,7 +115,9 @@ export default function BookingForm({
     <div className="bg-white grid gap-3 rounded-xl border p-4">
       <h2 className="text-lg font-semibold">Book this venue</h2>
 
-      {!user && <p className="text-sm text-gray-600">Log in to make a booking.</p>}
+      {!user && (
+        <p className="text-sm text-gray-600">Log in to make a booking.</p>
+      )}
       {error && <p className="text-sm text-red-600">{error}</p>}
       {ok && <p className="text-sm text-green-700">{ok}</p>}
 
@@ -128,7 +133,7 @@ export default function BookingForm({
               const newFrom = e.target.value;
               setDateFrom(newFrom);
 
-              // hvis "to" havner før/samme som ny "from", skyv den én dag frem
+              // If "to" falls before/same as new "from", bump it by one day
               setDateTo((prev) => {
                 if (!prev) return addDays(newFrom, 1);
                 if (new Date(prev) <= new Date(newFrom)) {
@@ -169,7 +174,7 @@ export default function BookingForm({
         </label>
       </div>
 
-      {/* info om brukerens egne bookinger */}
+      {/* Info about the user's own bookings on this venue */}
       {user && myUpcomingBookings.length > 0 && (
         <div className="mt-1 text-xs text-gray-700">
           {myUpcomingBookings.length === 1 ? (
@@ -195,7 +200,7 @@ export default function BookingForm({
         </div>
       )}
 
-      {/* advarsler */}
+      {/* Validation messages */}
       {dateFrom && dateTo && !ok && invalidRange && (
         <p className="text-sm text-red-600">
           Check-out date must be after check-in date.

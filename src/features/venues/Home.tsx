@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { FaCalendarAlt, FaGlobeEurope, FaRegClock } from "react-icons/fa";
 
 import { getLatestVenues } from "./api";
 import type { Venue } from "./types";
@@ -72,7 +73,7 @@ export default function Home() {
               />
               <button
                 type="submit"
-                className="bg-brand rounded px-4 py-2 text-sm font-medium text-white"
+                className="bg-brand-900 hover:bg-brand-800 cursor-pointer rounded px-4 py-2 text-sm font-medium text-white"
               >
                 Search venues
               </button>
@@ -104,27 +105,52 @@ export default function Home() {
               <button
                 type="button"
                 className="cursor-pointer rounded-full border bg-white px-3 py-1 hover:bg-gray-50"
-                onClick={() => nav("/venues?q=mountain")}
+                onClick={() => nav("/venues?q=trondheim")}
               >
-                Mountain cabins
+                Trondheim
               </button>
             </div>
           </div>
 
           <div className="hidden md:block">
-            <div className="from-brand/10 relative h-64 w-full overflow-hidden rounded-2xl bg-gradient-to-br via-blue-100 to-emerald-100">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#ffffff,_transparent_50%)]" />
-              <div className="absolute bottom-6 left-6 space-y-2">
-                <p className="text-xs tracking-wide text-gray-500 uppercase">Plan ahead</p>
-                <p className="text-lg font-semibold text-gray-800">
-                  Book early and never miss your perfect stay.
-                </p>
-                <Link
-                  to="/venues"
-                  className="text-brand inline-flex rounded bg-white px-3 py-1 text-xs font-medium shadow-sm"
-                >
-                  Browse all venues
-                </Link>
+            <div className="from-brand-100 relative h-64 w-full border overflow-hidden rounded-2xl bg-gradient-to-br via-brand-100 to-brand-300">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#ffffff,_transparent_55%)]" />
+
+              <div className="relative flex h-full flex-col justify-between p-6">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                    Plan ahead
+                  </p>
+                  <p className="text-lg font-semibold text-gray-800">
+                    Book early and never miss your perfect stay.
+                  </p>
+                  <p className="max-w-xs text-sm text-gray-700">
+                    Choose your dates, filter by price and guests, and save your favourites for
+                    later.
+                  </p>
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-gray-800">
+                  <div className="flex items-center gap-2">
+                    <FaCalendarAlt className="h-4 w-4" />
+                    <span>Flexible date search</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaGlobeEurope className="h-4 w-4" />
+                    <span>Stays across Norway and beyond</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaRegClock className="h-4 w-4" />
+                    <span>Book in minutes</span>
+                  </div>
+
+                  <Link
+                    to="/venues"
+                    className="text-brand ml-auto inline-flex items-center rounded bg-white px-3 py-1.5 text-xs font-medium shadow-sm hover:bg-gray-50"
+                  >
+                    Browse all venues
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
