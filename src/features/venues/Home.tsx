@@ -65,6 +65,9 @@ export default function Home() {
               onSubmit={onSubmit}
               className="flex flex-col gap-2 rounded-xl border bg-white p-3 shadow-sm sm:flex-row sm:items-center"
             >
+              <label htmlFor="home-search" className="sr-only">
+                Search venues
+              </label>
               <input
                 className="flex-1 rounded border px-3 py-2 text-sm"
                 placeholder="Search by city, venue name, or keyword…"
