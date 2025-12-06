@@ -92,7 +92,7 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
                 ) : (
                   <div className="h-full w-full bg-gray-200" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               </div>
 
               {/* content */}
@@ -120,14 +120,14 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
             <button
               aria-label="Previous"
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 cursor-pointer p-2 text-white hover:bg-black/55"
+              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 cursor-pointer p-2 text-white hover:bg-black/80"
             >
               ‹
             </button>
             <button
               aria-label="Next"
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 cursor-pointer p-2 text-white hover:bg-black/55"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 cursor-pointer p-2 text-white hover:bg-black/80"
             >
               ›
             </button>
