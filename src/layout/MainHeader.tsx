@@ -53,10 +53,7 @@ export default function MainHeader({ user, upcomingCount, onLogout }: Props) {
           {user && (
             <>
               {user.venueManager && (
-                <NavLink
-                  to="/manager/venues"
-                  className={({ isActive }) => linkClass(isActive)}
-                >
+                <NavLink to="/manager/venues" className={({ isActive }) => linkClass(isActive)}>
                   Manage venues
                 </NavLink>
               )}
@@ -70,10 +67,14 @@ export default function MainHeader({ user, upcomingCount, onLogout }: Props) {
               </NavLink>
 
               {user.avatarUrl && (
-                <NavLink to="/profile" className="shrink-0" aria-label="Profile">
+                <NavLink
+                  to="/profile"
+                  className="shrink-0"
+                  aria-label={user.name ? `${user.name}'s profile` : "Profile"}
+                >
                   <img
                     src={user.avatarUrl}
-                    alt={user.name}
+                    alt={user.name ? `${user.name}'s avatar` : "User avatar"}
                     className="h-8 w-8 rounded-full border object-cover"
                   />
                 </NavLink>

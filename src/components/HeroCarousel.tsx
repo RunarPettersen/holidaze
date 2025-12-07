@@ -4,43 +4,33 @@ import type { Venue } from "../features/venues/types";
 
 type Props = {
   venues: Venue[];
-  intervalMs?: number;
+  intervalMs?: number; // auto-advance, default 6000
 };
 
+/**
+ * Auto-playing hero carousel for featured venues.
+ * Shows one venue at a time with image, title and CTA.
+ */
 export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
   const [idx, setIdx] = useState(0);
   const timer = useRef<number | null>(null);
 
   const count = venues.length;
-
   const goTo = useCallback(
-    (i: number) => {
-      if (count === 0) return;
-      setIdx((i + count) % count);
-    },
-    [count]
+    (i: number) => setIdx(((i % count) + count) % count),
+    [count],
   );
-
-  const next = useCallback(() => {
-    goTo(idx + 1);
-  }, [goTo, idx]);
-
-  const prev = useCallback(() => {
-    goTo(idx - 1);
-  }, [goTo, idx]);
+  const next = useCallback(() => goTo(idx + 1), [goTo, idx]);
+  const prev = useCallback(() => goTo(idx - 1), [goTo, idx]);
 
   // auto-play (pause on hover/focus)
   useEffect(() => {
     if (count < 2) return;
-
-    if (timer.current) window.clearTimeout(timer.current);
-
     timer.current = window.setTimeout(next, intervalMs);
-
     return () => {
       if (timer.current) window.clearTimeout(timer.current);
     };
-  }, [count, intervalMs, next]);
+  }, [idx, count, intervalMs, next]);
 
   if (count === 0) return null;
 
@@ -63,51 +53,51 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
       >
         {venues.map((v, i) => {
           const active = i === idx;
-          const cover = v.media?.[0]?.url ?? "";
-          const alt = v.media?.[0]?.alt ?? v.name;
+
+          // Bruk ekte bilde hvis det finnes, ellers placeholder
+          const cover = v.media?.[0]?.url || "/images/noimage.jpg";
+          const alt = v.media?.[0]?.alt || v.name || "Venue image";
 
           return (
             <div
               key={v.id}
               className={`absolute inset-0 transition-opacity duration-700 ${
-                active
-                  ? "opacity-100 pointer-events-auto"
-                  : "opacity-0 pointer-events-none"
+                active ? "opacity-100" : "opacity-0"
               }`}
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${count}`}
-              aria-hidden={!active}
             >
-              {/* image */}
+              {/* image + mørk overlay */}
               <div className="absolute inset-0">
-                {cover ? (
-                  <img
-                    src={cover}
-                    alt={alt}
-                    className="h-full w-full object-cover"
-                    loading={i === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                  />
-                ) : (
-                  <div className="h-full w-full bg-gray-200" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <img
+                  src={cover}
+                  alt={alt}
+                  className="h-full w-full object-cover"
+                  loading={i === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                />
+                {/* gradient for kontrast – uendret */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
               </div>
 
-              {/* content */}
+              {/* content med egen bakgrunn bak teksten – uendret */}
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
-                <h3 className="text-2xl font-semibold drop-shadow">{v.name}</h3>
-                <p className="text-sm opacity-90">
-                  {(v.location?.city ?? "")} {(v.location?.country ?? "")} • {v.price} NOK / night
-                </p>
-                <div className="mt-3">
-                  <Link
-                    to={`/venues/${v.id}`}
-                    className="inline-block rounded bg-brand-900 px-4 py-2 text-white hover:bg-brand-800"
-                  >
-                    View details
-                  </Link>
+                <div className="inline-flex max-w-xl flex-col gap-1 rounded-lg bg-black/10 px-4 py-3 backdrop-blur-sm">
+                  <h3 className="text-2xl font-semibold">{v.name}</h3>
+                  <p className="text-sm">
+                    {(v.location?.city ?? "")}{" "}
+                    {v.location?.country ? `• ${v.location.country}` : ""} •{" "}
+                    {v.price} NOK / night
+                  </p>
+                  <div className="mt-2">
+                    <Link
+                      to={`/venues/${v.id}`}
+                      className="inline-block rounded bg-brand-900 px-4 py-2 text-sm font-medium text-white hover:bg-brand-800"
+                    >
+                      View details
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -118,16 +108,16 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
         {count > 1 && (
           <>
             <button
-              aria-label="Previous"
+              aria-label="Previous slide"
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 cursor-pointer p-2 text-white hover:bg-black/80"
+              className="absolute cursor-pointer left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
             >
               ‹
             </button>
             <button
-              aria-label="Next"
+              aria-label="Next slide"
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/70 cursor-pointer p-2 text-white hover:bg-black/80"
+              className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
             >
               ›
             </button>

@@ -7,11 +7,16 @@ import { getLatestVenues } from "./api";
 import type { Venue } from "./types";
 import HeroCarousel from "../../components/HeroCarousel";
 
+/**
+ * Home page for Holidaze.
+ * Shows a featured venues carousel, global search box
+ * and a promotional "Plan ahead" panel.
+ */
 export default function Home() {
   const nav = useNavigate();
   const [query, setQuery] = useState("");
 
-  // Hent 5 nyeste (API-rekkefølge + sort fallback på created om feltet finnes)
+  // Fetch 5 latest venues (falls back to sorting by created date if present)
   const { data, isLoading, isError } = useQuery<Venue[]>({
     queryKey: ["featured-venues", "latest-5"],
     queryFn: () => getLatestVenues(5),
@@ -20,11 +25,16 @@ export default function Home() {
   const featured = (data ?? []).slice().sort((a, b) => {
     const ca = a.created ?? "";
     const cb = b.created ?? "";
-    // nyeste først hvis created finnes, ellers beholder rekkefølgen
+    // newest first if "created" exists, otherwise keep API order
     return cb.localeCompare(ca);
   });
 
-  function onSubmit(e: React.FormEvent) {
+  /**
+   * Handle search form submit.
+   * If the query is empty we navigate to /venues,
+   * otherwise we include ?q=<query> in the URL.
+   */
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const q = query.trim();
     if (!q) {
@@ -42,14 +52,14 @@ export default function Home() {
           <div className="h-[380px] w-full animate-pulse rounded-2xl border bg-gray-200 sm:h-[440px]" />
         ) : isError ? (
           <div className="rounded-2xl border bg-white p-4 text-sm text-red-600">
-            Couldn’t load featured venues.
+            Couldn&apos;t load featured venues.
           </div>
         ) : (
           <HeroCarousel venues={featured} />
         )}
       </div>
 
-      {/* Søk + promosnutten din */}
+      {/* Search + promo */}
       <div className="mx-auto w-full max-w-6xl px-4">
         <div className="grid items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]">
           <div className="space-y-6">
@@ -57,8 +67,9 @@ export default function Home() {
               Find your next stay with Holidaze
             </h1>
             <p className="max-w-xl text-gray-600">
-              Browse unique venues across Norway and beyond. Whether you&apos;re planning a weekend
-              getaway or a longer trip, we&apos;ve got you covered.
+              Browse unique venues across Norway and beyond. Whether you&apos;re
+              planning a weekend getaway or a longer trip, we&apos;ve got you
+              covered.
             </p>
 
             <form
@@ -69,6 +80,7 @@ export default function Home() {
                 Search venues
               </label>
               <input
+                id="home-search"
                 className="flex-1 rounded border px-3 py-2 text-sm"
                 placeholder="Search by city, venue name, or keyword…"
                 value={query}
@@ -116,20 +128,20 @@ export default function Home() {
           </div>
 
           <div className="hidden md:block">
-            <div className="from-brand-100 relative h-64 w-full border overflow-hidden rounded-2xl bg-gradient-to-br via-brand-100 to-brand-300">
+            <div className="from-brand-100 relative h-full w-full overflow-hidden rounded-2xl border bg-gradient-to-br via-brand-100 to-brand-300">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#ffffff,_transparent_55%)]" />
 
               <div className="relative flex h-full flex-col justify-between p-6">
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Plan ahead
                   </p>
                   <p className="text-lg font-semibold text-gray-800">
                     Book early and never miss your perfect stay.
                   </p>
                   <p className="max-w-xs text-sm text-gray-700">
-                    Choose your dates, filter by price and guests, and save your favourites for
-                    later.
+                    Choose your dates, filter by price and guests, and save your
+                    favourites for later.
                   </p>
                 </div>
 

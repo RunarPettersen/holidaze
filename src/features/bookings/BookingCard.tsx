@@ -8,25 +8,32 @@ type Props = {
   cancelPending?: boolean;
 };
 
+/**
+ * Card component for a single booking in the “My bookings” list.
+ * Shows venue image, basic info and an optional cancel button
+ * for upcoming stays.
+ */
 export default function BookingCard({ booking, onCancelClick, cancelPending }: Props) {
   const v = booking.venue;
   const cover = v?.media?.[0];
 
+  // Use venue image if available, otherwise a generic placeholder
+  const coverUrl = cover?.url || "/images/noimage.jpg";
+  const coverAlt = cover?.alt ?? v?.name ?? "Venue image";
+
   return (
-    <li className="rounded-xl border overflow-hidden flex flex-col">
+    <li className="flex flex-col overflow-hidden rounded-xl border">
       <Link to={`/venues/${v?.id ?? ""}`} className="block">
         <div className="aspect-[16/10] bg-gray-100">
-          {cover?.url && (
-            <img
-              src={cover.url}
-              alt={cover.alt ?? v?.name ?? "Venue"}
-              className="h-full w-full object-cover"
-            />
-          )}
+          <img
+            src={coverUrl}
+            alt={coverAlt}
+            className="h-full w-full object-cover"
+          />
         </div>
       </Link>
 
-      <div className="p-4 flex-1 flex flex-col gap-2 bg-white">
+      <div className="flex flex-1 flex-col gap-2 bg-white p-4">
         <div>
           <h3 className="font-semibold">{v?.name ?? "Unknown place"}</h3>
           <p className="text-sm text-gray-600">
@@ -42,7 +49,7 @@ export default function BookingCard({ booking, onCancelClick, cancelPending }: P
 
           {isUpcoming(booking.dateTo) && onCancelClick && (
             <button
-              className="rounded border px-3 py-1 text-red-600 cursor-pointer hover:bg-red-50 disabled:opacity-50"
+              className="cursor-pointer rounded border px-3 py-1 text-red-600 hover:bg-red-50 disabled:opacity-50"
               disabled={!!cancelPending}
               onClick={() => onCancelClick(booking.id)}
             >
