@@ -54,21 +54,25 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
         {venues.map((v, i) => {
           const active = i === idx;
 
-          // Bruk ekte bilde hvis det finnes, ellers placeholder
+          // Use real image if present, otherwise placeholder
           const cover = v.media?.[0]?.url || "/images/noimage.jpg";
           const alt = v.media?.[0]?.alt || v.name || "Venue image";
 
           return (
             <div
               key={v.id}
-              className={`absolute inset-0 transition-opacity duration-700 ${
-                active ? "opacity-100" : "opacity-0"
-              }`}
+              className={
+                "absolute inset-0 transition-opacity duration-700 " +
+                (active
+                  ? "opacity-100 pointer-events-auto"
+                  : "opacity-0 pointer-events-none")
+              }
               role="group"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${count}`}
+              aria-hidden={!active}
             >
-              {/* image + mørk overlay */}
+              {/* image + dark overlay */}
               <div className="absolute inset-0">
                 <img
                   src={cover}
@@ -77,11 +81,11 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
                   loading={i === 0 ? "eager" : "lazy"}
                   decoding="async"
                 />
-                {/* gradient for kontrast – uendret */}
+                {/* gradient for contrast – unchanged */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
               </div>
 
-              {/* content med egen bakgrunn bak teksten – uendret */}
+              {/* content with background behind text – unchanged */}
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
                 <div className="inline-flex max-w-xl flex-col gap-1 rounded-lg bg-black/10 px-4 py-3 backdrop-blur-sm">
                   <h3 className="text-2xl font-semibold">{v.name}</h3>
@@ -110,14 +114,14 @@ export default function HeroCarousel({ venues, intervalMs = 6000 }: Props) {
             <button
               aria-label="Previous slide"
               onClick={prev}
-              className="absolute cursor-pointer left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
+              className="absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
             >
               ‹
             </button>
             <button
               aria-label="Next slide"
               onClick={next}
-              className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-black/40 p-2 text-white hover:bg-black/55"
             >
               ›
             </button>
